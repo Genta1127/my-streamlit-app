@@ -9,22 +9,28 @@ st.set_page_config(
     layout="centered"
 )
 
-# カスタムCSS（例えボックスやカードのデザイン）
+# レスポンシブ対応カスタムCSS
 st.markdown("""
 <style>
+    /* カード全体のレスポンシブ余白設定 */
     .metric-card {
         background-color: #f0f4f8;
         border-radius: 12px;
-        padding: 25px;
+        padding: 4vw 20px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         text-align: center;
         margin-bottom: 20px;
+        width: 100%;
+        box-sizing: border-box;
     }
+    /* タイトルフォントサイズの可変（画面幅に応じて自動調節） */
     .card-title {
         color: #00A1E0;
-        font-size: 28px;
+        font-size: clamp(20px, 5vw, 32px);
         font-weight: bold;
+        word-wrap: break-word;
     }
+    /* 例えボックスのレスポンシブ化 */
     .analogy-box {
         background-color: #FFF3CD;
         border-left: 5px solid #FFC107;
@@ -32,6 +38,13 @@ st.markdown("""
         border-radius: 6px;
         margin-top: 10px;
         color: #856404;
+        font-size: clamp(14px, 3.5vw, 16px);
+        word-wrap: break-word;
+    }
+    /* ボタンを全幅で押しやすく調整 */
+    .stButton > button {
+        width: 100%;
+        border-radius: 8px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -159,14 +172,15 @@ if mode == "🎴 カードめくり機能":
     if "show_back" not in st.session_state:
         st.session_state.show_back = False
 
-    col1, col2, col3 = st.columns([1, 2, 1])
+    # モバイル端末対応：Columnsの配置を幅いっぱい(use_container_width)にする
+    col1, col2 = st.columns(2)
     with col1:
-        if st.button("⬅️ 前へ"):
+        if st.button("⬅️ 前へ", use_container_width=True):
             st.session_state.card_index = (st.session_state.card_index - 1) % len(df)
             st.session_state.show_back = False
             st.rerun()
-    with col3:
-        if st.button("次へ ➡️"):
+    with col2:
+        if st.button("次へ ➡️", use_container_width=True):
             st.session_state.card_index = (st.session_state.card_index + 1) % len(df)
             st.session_state.show_back = False
             st.rerun()
@@ -185,15 +199,16 @@ if mode == "🎴 カードめくり機能":
             st.info(f"💡 **概要・解説:** {current_def}")
             st.markdown(f'<div class="analogy-box">🎯 **直感的な例え:** {current_analogy}</div>', unsafe_allow_html=True)
             st.write("")
-            if st.button("表面を隠す"):
+            if st.button("表面を隠す", use_container_width=True):
                 st.session_state.show_back = False
                 st.rerun()
         else:
-            if st.button("🔄 意味・例えを見る"):
+            if st.button("🔄 意味・例えを見る", use_container_width=True):
                 st.session_state.show_back = True
                 st.rerun()
 
-    if st.button("🎲 ランダムに移動"):
+    st.write("")
+    if st.button("🎲 ランダムに移動", use_container_width=True):
         st.session_state.card_index = random.randint(0, len(df) - 1)
         st.session_state.show_back = False
         st.rerun()
@@ -230,7 +245,7 @@ elif mode == "❓ 4択クイズ機能":
     st.subheader(f"問題: **{st.session_state.quiz_question}** の正しい説明は？")
 
     for i, option in enumerate(st.session_state.quiz_options):
-        if st.button(f"{i+1}. {option}", key=f"opt_{i}"):
+        if st.button(f"{i+1}. {option}", key=f"opt_{i}", use_container_width=True):
             st.session_state.user_answered = True
             st.session_state.total_quiz += 1
             if option == st.session_state.correct_answer:
@@ -240,7 +255,7 @@ elif mode == "❓ 4択クイズ機能":
                 st.error(f"❌ 残念！正解は: {st.session_state.correct_answer}\n\n🎯 **例え:** {st.session_state.correct_analogy}")
 
     if st.session_state.user_answered:
-        if st.button("次の問題へ ➡️"):
+        if st.button("次の問題へ ➡️", use_container_width=True):
             generate_new_question()
             st.rerun()
 
