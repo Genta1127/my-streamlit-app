@@ -153,23 +153,6 @@ mode = st.sidebar.radio("学習モードを選択", ["🎴 カードめくり機
 # --- モード1: カードめくり ---
 if mode == "🎴 カードめくり機能":
     st.header("🎴 単語カード学習")
-    
-    if "card_index" not in st.session_state:
-        st.session_state.card_index = 0
-    if "show_back" not in st.session_state:
-        st.session_state.show_back = False
-
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col1:
-        if st.button("⬅️ 前へ"):
-            st.session_state.card_index = (st.session_state.card_index - 1) % len(df)
-            st.session_state.show_back = False
-            st.rerun()
-    with col3:
-        if st.button("次へ ➡️"):
-            st.session_state.card_index = (st.session_state.card_index + 1) % len(df)
-            st.session_state.show_back = False
-            st.rerun()
 
     current_term = df.iloc[st.session_state.card_index]["Term"]
     current_def = df.iloc[st.session_state.card_index]["Definition"]
@@ -193,6 +176,23 @@ if mode == "🎴 カードめくり機能":
                 st.session_state.show_back = True
                 st.rerun()
 
+    if "card_index" not in st.session_state:
+        st.session_state.card_index = 0
+    if "show_back" not in st.session_state:
+        st.session_state.show_back = False
+
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col1:
+        if st.button("⬅️ 前へ"):
+            st.session_state.card_index = (st.session_state.card_index - 1) % len(df)
+            st.session_state.show_back = False
+            st.rerun()
+    with col3:
+        if st.button("次へ ➡️"):
+            st.session_state.card_index = (st.session_state.card_index + 1) % len(df)
+            st.session_state.show_back = False
+            st.rerun()
+    
     if st.button("🎲 ランダムに移動"):
         st.session_state.card_index = random.randint(0, len(df) - 1)
         st.session_state.show_back = False
